@@ -1,0 +1,12 @@
+fomal/
+test/
+za/
+display_screen/Debug/
+display_screen/Release/
+speed_msg*.txt
+
+*.dll
+*~
+
+#
+*.bak

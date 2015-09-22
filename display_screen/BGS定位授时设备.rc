@@ -1,0 +1,233 @@
+//Microsoft Developer Studio generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// Chinese (中国) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_CHS)
+#ifdef _WIN32
+LANGUAGE LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED
+#pragma code_page(936)
+#endif //_WIN32
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "#define _AFX_NO_SPLITTER_RESOURCES\r\n"
+    "#define _AFX_NO_OLE_RESOURCES\r\n"
+    "#define _AFX_NO_TRACKER_RESOURCES\r\n"
+    "#define _AFX_NO_PROPERTY_RESOURCES\r\n"
+    "\r\n"
+    "#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_CHS)\r\n"
+    "#ifdef _WIN32\r\n"
+    "LANGUAGE 4, 2\r\n"
+    "#pragma code_page(936)\r\n"
+    "#endif //_WIN32\r\n"
+    "#include ""res\\BGS定位授时设备.rc2""  // non-Microsoft Visual C++ edited resources\r\n"
+    "#include ""l.chs\\afxres.rc""          // Standard components\r\n"
+    "#endif\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDR_MAINFRAME           ICON    DISCARDABLE     "res\\BGS定位授时设备.ico"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_ABOUTBOX DIALOG DISCARDABLE  0, 0, 235, 55
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "关于 BGS定位授时设备"
+FONT 9, "宋体"
+BEGIN
+    ICON            IDR_MAINFRAME,IDC_STATIC,11,17,20,20
+    LTEXT           "BGS定位授时设备 1.0 版",IDC_STATIC,40,10,119,8,
+                    SS_NOPREFIX
+    LTEXT           "版权所有 (C) 2015",IDC_STATIC,40,25,119,8
+    DEFPUSHBUTTON   "确定",IDOK,178,7,50,14,WS_GROUP
+END
+
+IDD_BGS_DIALOG DIALOGEX 0, 0, 903, 387
+STYLE DS_MODALFRAME | WS_POPUP | WS_VISIBLE
+EXSTYLE WS_EX_APPWINDOW
+FONT 9, "宋体"
+BEGIN
+    LTEXT           "斜距",IDC_XIEJU1,13,135,69,37,NOT WS_GROUP
+    LTEXT           "相对速度",IDC_STATIC_SPEED,264,164,114,27
+    LTEXT           "m",IDC_STATIC1,199,137,23,21
+    LTEXT           "时间",IDC_TIME,264,107,83,31
+    LTEXT           "：",IDC_STATIC5,407,105,9,31,NOT WS_GROUP
+    LTEXT           "：",IDC_STATIC6,452,105,9,36,NOT WS_GROUP
+    LTEXT           "",IDC_HOUR,375,107,32,28,NOT WS_GROUP
+    LTEXT           "",IDC_MIN,420,107,29,32,NOT WS_GROUP
+    LTEXT           "",IDC_SEC,475,108,58,30,NOT WS_GROUP
+    RTEXT           "",IDC_XIEJU,74,139,108,32,NOT WS_GROUP
+    RTEXT           "",IDC_SPEED,364,165,103,28,NOT WS_GROUP
+    LTEXT           "两机相对位置",IDC_STATIC,169,41,192,45,NOT WS_GROUP
+    LTEXT           "m/s",IDC_STATIC7,483,164,37,30,NOT WS_GROUP
+    LTEXT           "△x",IDC_xx,13,237,63,33,NOT WS_GROUP
+    LTEXT           "△y",IDC_yy,13,285,66,31,NOT WS_GROUP
+    LTEXT           "△z",IDC_zz,14,332,69,37,NOT WS_GROUP
+    LTEXT           "△Vx",IDC_V_X,264,239,72,34,NOT WS_GROUP
+    LTEXT           "△Vy",IDC_V_Y,264,286,63,24,NOT WS_GROUP
+    LTEXT           "△Vz",IDC_V_Z,264,332,70,30,NOT WS_GROUP
+    LTEXT           "m",IDC_STATIC3,199,238,19,20,NOT WS_GROUP
+    RTEXT           "",IDC_x,82,239,100,32,NOT WS_GROUP
+    LTEXT           "m",IDC_STATIC4,199,285,23,19,NOT WS_GROUP
+    RTEXT           "",IDC_y,81,287,101,32,NOT WS_GROUP
+    LTEXT           "m",IDC_STATIC8,201,331,19,19
+    RTEXT           "",IDC_z,80,334,102,32,NOT WS_GROUP
+    RTEXT           "",IDC_Vx,367,239,101,28,NOT WS_GROUP
+    LTEXT           "m/s",IDC_STATIC9,484,238,37,23,NOT WS_GROUP
+    RTEXT           "",IDC_Vy,370,288,98,28,NOT WS_GROUP
+    LTEXT           "m/s",IDC_STATIC10,485,286,39,22,NOT WS_GROUP
+    RTEXT           "",IDC_Vz,362,336,106,28,NOT WS_GROUP
+    LTEXT           "m/s",IDC_STATIC11,486,333,37,26,NOT WS_GROUP
+    RTEXT           "",IDC_STATE2,364,28,131,22,NOT WS_GROUP
+END
+
+
+#ifndef _MAC
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 1,0,0,1
+ PRODUCTVERSION 1,0,0,1
+ FILEFLAGSMASK 0x3fL
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x4L
+ FILETYPE 0x1L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "080404B0"
+        BEGIN
+            VALUE "CompanyName", "\0"
+            VALUE "FileDescription", "BGS定位授时设备 Microsoft 基础类应用程序\0"
+            VALUE "FileVersion", "1, 0, 0, 1\0"
+            VALUE "InternalName", "BGS定位授时设备\0"
+            VALUE "LegalCopyright", "版权所有 (C) 2015\0"
+            VALUE "LegalTrademarks", "\0"
+            VALUE "OriginalFilename", "BGS定位授时设备.EXE\0"
+            VALUE "ProductName", "BGS定位授时设备 应用程序\0"
+            VALUE "ProductVersion", "1, 0, 0, 1\0"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x804, 1200
+    END
+END
+
+#endif    // !_MAC
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO DISCARDABLE 
+BEGIN
+    IDD_ABOUTBOX, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 228
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 48
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+IDB_BITMAP1             BITMAP  DISCARDABLE     "res\\图1.bmp"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_ABOUTBOX            "关于 BGS定位授时设备(&A)..."
+END
+
+#endif    // Chinese (中国) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+#define _AFX_NO_SPLITTER_RESOURCES
+#define _AFX_NO_OLE_RESOURCES
+#define _AFX_NO_TRACKER_RESOURCES
+#define _AFX_NO_PROPERTY_RESOURCES
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_CHS)
+#ifdef _WIN32
+LANGUAGE 4, 2
+#pragma code_page(936)
+#endif //_WIN32
+#include "res\BGS定位授时设备.rc2"  // non-Microsoft Visual C++ edited resources
+#include "l.chs\afxres.rc"          // Standard components
+#endif
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+
