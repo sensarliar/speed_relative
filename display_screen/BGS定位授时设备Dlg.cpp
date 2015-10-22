@@ -218,6 +218,12 @@ BOOL CBGSDlg::OnInitDialog()
 	SetDlgItemText(IDC_Vx2,"0");
 	SetDlgItemText(IDC_Vy2,"0");
 	SetDlgItemText(IDC_Vz2,"0");
+
+//////////////////////////////////////////
+
+	b2_hff_init(0, 0, 0, 0);
+	/////////////////////////////////////
+
 	
 	sockInitFlag = InitSocket();
 	
@@ -811,9 +817,13 @@ void CBGSDlg::OnSocket(WPARAM wParam ,LPARAM lParam)
 			gps.rel_ant_pos.z = -up;
 			
 			gps.speed_angle = angle;
+			/*
 			gps.rel_ant_last_pos.x = -east1;
 			gps.rel_ant_last_pos.y = -north1;
 			gps.rel_ant_last_pos.z = -up1;
+			*/
+
+
 
 			calc_enu2xyz_plane_ordinator(&(gps.rel_ant2plane_pos),&(gps.rel_ant_pos));
 		
@@ -821,7 +831,7 @@ void CBGSDlg::OnSocket(WPARAM wParam ,LPARAM lParam)
 			
 			calc_tail2head_pos();
 
-			calc_rel_speed_method1();
+		//	calc_rel_speed_method1();
 
 			calc_rel_speed_method2();
 //display			
