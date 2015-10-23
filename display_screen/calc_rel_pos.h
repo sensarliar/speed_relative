@@ -33,8 +33,8 @@ struct GpsState {
   struct point_3d rel_ant_pos_enu_measure;//
   struct point_3d rel_speedv2_enu_measure;
 
-  struct point_3d rel_ant_pos_enu_filter;//
-  struct point_3d rel_speedv2_enu_filter;
+//  struct point_3d rel_ant_pos_enu_filter;//
+//  struct point_3d rel_speedv2_enu_filter;
 };
 
 
@@ -52,8 +52,11 @@ struct Hfilterdouble {
   /* double ybias; */
   double ydot;
 //  double ydotdot;
+  double z;
+  double zdot;
   double xP[HFF_STATE_SIZE][HFF_STATE_SIZE];
   double yP[HFF_STATE_SIZE][HFF_STATE_SIZE];
+  double zP[HFF_STATE_SIZE][HFF_STATE_SIZE];
 //  uint8_t lag_counter;
  // bool_t rollback;
 };
@@ -73,7 +76,9 @@ void calc_tail2head_pos();
 void calc_rel_speed_method1();
 void calc_rel_speed_method2();
 
-void b2_hff_init(double init_x, double init_xdot, double init_y, double init_ydot);
+//void b2_hff_init(double init_x, double init_xdot, double init_y, double init_ydot);
+void b2_hff_init(double init_x, double init_xdot, double init_y, double init_ydot, double init_z, double init_zdot);
+
 void b2_hff_update_gps();
 void b2_hff_propagate(void);
 

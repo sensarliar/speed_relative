@@ -221,7 +221,7 @@ BOOL CBGSDlg::OnInitDialog()
 
 //////////////////////////////////////////
 
-	b2_hff_init(0, 0, 0, 0);
+	b2_hff_init(0, 0, 0, 0, 0, 0);
 	/////////////////////////////////////
 
 	
@@ -674,7 +674,14 @@ void CBGSDlg::OnSocket(WPARAM wParam ,LPARAM lParam)
 	CString m_v_east_v2;
 	CString m_v_north_v2;
 	CString m_v_up_v2;
-	
+
+	CString m_filter_east;
+	CString m_filter_north;
+	CString m_filter_up;
+
+	CString m_v_filter_east;
+	CString m_v_filter_north;
+	CString m_v_filter_up;
 
 	//偏航角
 	CString m_angle;
@@ -811,10 +818,29 @@ void CBGSDlg::OnSocket(WPARAM wParam ,LPARAM lParam)
 	gps.speed_3d_sy.z=atof(speed_jy.speed_U_ch);
 	
 	}			
-				
-			gps.rel_ant_pos.x = -east;
-			gps.rel_ant_pos.y = -north;
-			gps.rel_ant_pos.z = -up;
+	
+			gps.rel_ant_pos_enu_measure.x = east;
+			gps.rel_ant_pos_enu_measure.y = north;
+			gps.rel_ant_pos_enu_measure.z = up;
+
+			gps.rel_speedv2_enu_measure.x = gps.speed_3d_sy.x - gps.speed_3d_jy.x;
+			gps.rel_speedv2_enu_measure.y = gps.speed_3d_sy.y - gps.speed_3d_jy.y;
+			gps.rel_speedv2_enu_measure.z = gps.speed_3d_sy.z - gps.speed_3d_jy.z;
+
+			b2_hff_update_gps();
+
+		//	gps.rel_ant_pos.x = -gps.rel_ant_pos_enu_filter.x;
+		//	gps.rel_ant_pos.y = -gps.rel_ant_pos_enu_filter.y;
+		//	gps.rel_ant_pos.z = -gps.rel_ant_pos_enu_filter.z;
+
+		///////////////after kalman filter///////////////////	
+			gps.rel_ant_pos.x = -b2_hff_state.x;
+			gps.rel_ant_pos.y = -b2_hff_state.y;
+			gps.rel_ant_pos.z = -b2_hff_state.z;
+
+			gps.rel_speedv2_enu.x = -b2_hff_state.xdot;
+			gps.rel_speedv2_enu.y = -b2_hff_state.ydot;
+			gps.rel_speedv2_enu.z = -b2_hff_state.zdot;
 			
 			gps.speed_angle = angle;
 			/*
@@ -876,7 +902,15 @@ void CBGSDlg::OnSocket(WPARAM wParam ,LPARAM lParam)
 			//speed_v2=sqrt(gps.rel_speedv2_xyz.x*gps.rel_speedv2_xyz.x+gps.rel_speedv2_xyz.y*gps.rel_speedv2_xyz.y+gps.rel_speedv2_xyz.z*gps.rel_speedv2_xyz.z);
 			m_speed_v2.Format("%.2f",speed_v2);
 	//		SetDlgItemText(IDC_SPEED2,m_speed_v2);
+
+			m_filter_east.Format("%.4f",b2_hff_state.x);
+			m_filter_north.Format("%.4f",b2_hff_state.y);
+			m_filter_up.Format("%.4f",b2_hff_state.z);
 			
+			m_v_filter_east.Format("%.4f",b2_hff_state.xdot);
+			m_v_filter_north.Format("%.4f",b2_hff_state.ydot);
+			m_v_filter_up.Format("%.4f",b2_hff_state.zdot);
+
 			disp_count++;
 //display 2
 	if(disp_count >4)
@@ -915,8 +949,11 @@ void CBGSDlg::OnSocket(WPARAM wParam ,LPARAM lParam)
 			SetDlgItemText(IDC_SPEED2,m_speed_v2);
 */
 			disp_count =0;
+
+
 	}
 
+	b2_hff_propagate();
 
 	 //保存处理后的数据
 	char str_tx[1024]="$DATA,";
@@ -1166,7 +1203,93 @@ void CBGSDlg::OnSocket(WPARAM wParam ,LPARAM lParam)
 	}
 	*str_p = ',';
 	str_p++;
+////////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////////////
+	//获取东向位置filter
+	//GetDlgItem(IDC_x)->GetWindowText(text);
+	i = 0;
+	text=m_filter_east;
+	text_len = text.GetLength();
+	while(text_len--)
+	{
+		*str_p=text.GetAt(i);
+		str_p++;
+		i++;
+	}
+	*str_p = ',';
+	str_p++;
 
+	//获取北向位置filter
+	//GetDlgItem(IDC_y)->GetWindowText(text);
+	i = 0;
+	text=m_filter_north;
+	text_len = text.GetLength();
+	while(text_len--)
+	{
+		*str_p=text.GetAt(i);
+		str_p++;
+		i++;
+	}
+	*str_p = ',';
+	str_p++;
+
+	//获取上向位置filter
+	//GetDlgItem(IDC_z)->GetWindowText(text);
+	i = 0;
+	text=m_filter_up;
+	text_len = text.GetLength();
+	while(text_len--)
+	{
+		*str_p=text.GetAt(i);
+		str_p++;
+		i++;
+	}
+	*str_p = ',';
+	str_p++;
+
+		//获取东向v filter
+	//GetDlgItem(IDC_x)->GetWindowText(text);
+	i = 0;
+	text=m_v_filter_east;
+	text_len = text.GetLength();
+	while(text_len--)
+	{
+		*str_p=text.GetAt(i);
+		str_p++;
+		i++;
+	}
+	*str_p = ',';
+	str_p++;
+
+	//获取北向v filter
+	//GetDlgItem(IDC_y)->GetWindowText(text);
+	i = 0;
+	text=m_v_filter_north;
+	text_len = text.GetLength();
+	while(text_len--)
+	{
+		*str_p=text.GetAt(i);
+		str_p++;
+		i++;
+	}
+	*str_p = ',';
+	str_p++;
+
+	//获取上向v filter
+	//GetDlgItem(IDC_z)->GetWindowText(text);
+	i = 0;
+	text=m_v_filter_up;
+	text_len = text.GetLength();
+	while(text_len--)
+	{
+		*str_p=text.GetAt(i);
+		str_p++;
+		i++;
+	}
+	*str_p = ',';
+	str_p++;
+///////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////
 
 	*str_p = 0x0d;
 	str_p++;

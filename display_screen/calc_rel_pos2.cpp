@@ -164,9 +164,9 @@ void calc_rel_speed_method1()
 
 void calc_rel_speed_method2()
 {
-	gps.rel_speedv2_enu.x = gps.speed_3d_jy.x - gps.speed_3d_sy.x;
-	gps.rel_speedv2_enu.y = gps.speed_3d_jy.y - gps.speed_3d_sy.y;
-	gps.rel_speedv2_enu.z = gps.speed_3d_jy.z - gps.speed_3d_sy.z;
+//	gps.rel_speedv2_enu.x = gps.speed_3d_jy.x - gps.speed_3d_sy.x;
+//	gps.rel_speedv2_enu.y = gps.speed_3d_jy.y - gps.speed_3d_sy.y;
+//	gps.rel_speedv2_enu.z = gps.speed_3d_jy.z - gps.speed_3d_sy.z;
 
 	calc_enu2xyz_plane_ordinator(&(gps.rel_speedv2_xyz),&(gps.rel_speedv2_enu));
 
@@ -174,7 +174,7 @@ void calc_rel_speed_method2()
 
 
 
-///////////////////////////////////////////
+//////////////////////////////////////////filter////////////
 
 
 
@@ -204,12 +204,26 @@ static void b2_hff_init_y(double init_y, double init_ydot)
   }
 }
 
-void b2_hff_init(double init_x, double init_xdot, double init_y, double init_ydot)
+static void b2_hff_init_z(double init_z, double init_zdot)
+{
+  b2_hff_state.z     = init_z;
+  b2_hff_state.zdot  = init_zdot;
+  int i, j;
+  for (i = 0; i < HFF_STATE_SIZE; i++) {
+    for (j = 0; j < HFF_STATE_SIZE; j++) {
+      b2_hff_state.zP[i][j] = 0.;
+    }
+    b2_hff_state.zP[i][i] = INIT_PXX;
+  }
+}
+
+void b2_hff_init(double init_x, double init_xdot, double init_y, double init_ydot, double init_z, double init_zdot)
 {
   Rgps_pos = HFF_R_POS;
   Rgps_vel = HFF_R_SPEED;
   b2_hff_init_x(init_x, init_xdot);
   b2_hff_init_y(init_y, init_ydot);
+  b2_hff_init_z(init_z, init_zdot);
 
 }
 
@@ -268,6 +282,23 @@ static void b2_hff_propagate_y(struct Hfilterdouble *hff_work, double dt)
   hff_work->yP[1][1] = FPF11 + Qdotdot;
 }
 
+static void b2_hff_propagate_z(struct Hfilterdouble *hff_work, double dt)
+{
+  /* update state */
+ // hff_work->ydotdot = b2_hff_ydd_meas;
+  hff_work->z = hff_work->z + dt * hff_work->zdot;
+  hff_work->zdot = hff_work->zdot;
+  /* update covariance */
+  const double FPF00 = hff_work->zP[0][0] + dt * (hff_work->zP[1][0] + hff_work->zP[0][1] + dt * hff_work->zP[1][1]);
+  const double FPF01 = hff_work->zP[0][1] + dt * hff_work->zP[1][1];
+  const double FPF10 = hff_work->zP[1][0] + dt * hff_work->zP[1][1];
+  const double FPF11 = hff_work->zP[1][1];
+
+  hff_work->zP[0][0] = FPF00 + Q;
+  hff_work->zP[0][1] = FPF01;
+  hff_work->zP[1][0] = FPF10;
+  hff_work->zP[1][1] = FPF11 + Qdotdot;
+}
 
 /*
  *
@@ -336,6 +367,28 @@ static void b2_hff_update_y(struct Hfilterdouble *hff_work, double y_meas, doubl
 }
 
 
+static void b2_hff_update_z(struct Hfilterdouble *hff_work, double z_meas, double Rpos)
+{
+ // b2_hff_y_meas = y_meas;
+
+  const double z  = z_meas - hff_work->z;
+  const double S  = hff_work->zP[0][0] + Rpos;
+  const double K1 = hff_work->zP[0][0] * 1 / S;
+  const double K2 = hff_work->zP[1][0] * 1 / S;
+
+  hff_work->z     = hff_work->z     + K1 * z;
+  hff_work->zdot  = hff_work->zdot  + K2 * z;
+
+  const double P11 = (1. - K1) * hff_work->zP[0][0];
+  const double P12 = (1. - K1) * hff_work->zP[0][1];
+  const double P21 = -K2 * hff_work->zP[0][0] + hff_work->zP[1][0];
+  const double P22 = -K2 * hff_work->zP[0][1] + hff_work->zP[1][1];
+
+  hff_work->zP[0][0] = P11;
+  hff_work->zP[0][1] = P12;
+  hff_work->zP[1][0] = P21;
+  hff_work->zP[1][1] = P22;
+}
 /*
  *
  * Update velocity
@@ -403,6 +456,29 @@ static void b2_hff_update_ydot(struct Hfilterdouble *hff_work, double vel, doubl
   hff_work->yP[1][1] = P22;
 }
 
+
+static void b2_hff_update_zdot(struct Hfilterdouble *hff_work, double vel, double Rvel)
+{
+//  b2_hff_yd_meas = vel;
+
+  const double zd = vel - hff_work->zdot;
+  const double S  = hff_work->zP[1][1] + Rvel;
+  const double K1 = hff_work->zP[0][1] * 1 / S;
+  const double K2 = hff_work->zP[1][1] * 1 / S;
+
+  hff_work->z     = hff_work->z     + K1 * zd;
+  hff_work->zdot  = hff_work->zdot  + K2 * zd;
+
+  const double P11 = -K1 * hff_work->zP[1][0] + hff_work->zP[0][0];
+  const double P12 = -K1 * hff_work->zP[1][1] + hff_work->zP[0][1];
+  const double P21 = (1. - K2) * hff_work->zP[1][0];
+  const double P22 = (1. - K2) * hff_work->zP[1][1];
+
+  hff_work->zP[0][0] = P11;
+  hff_work->zP[0][1] = P12;
+  hff_work->zP[1][0] = P21;
+  hff_work->zP[1][1] = P22;
+}
 //void b2_hff_update_gps(struct FloatVect2 *pos_ned, struct FloatVect2 *speed_ned)
 void b2_hff_update_gps()
 {
@@ -423,9 +499,11 @@ void b2_hff_update_gps()
     /* update filter state with measurement */
     b2_hff_update_x(&b2_hff_state, gps.rel_ant_pos_enu_measure.x, Rgps_pos);
     b2_hff_update_y(&b2_hff_state, gps.rel_ant_pos_enu_measure.y, Rgps_pos);
+	b2_hff_update_z(&b2_hff_state, gps.rel_ant_pos_enu_measure.z, Rgps_pos);
 
     b2_hff_update_xdot(&b2_hff_state, gps.rel_speedv2_enu_measure.x, Rgps_vel);
     b2_hff_update_ydot(&b2_hff_state, gps.rel_speedv2_enu_measure.y, Rgps_vel);
+	b2_hff_update_zdot(&b2_hff_state, gps.rel_speedv2_enu_measure.z, Rgps_vel);
 
   }
 
@@ -434,4 +512,5 @@ void b2_hff_propagate(void)
 //// output result befor propagate;,
 	b2_hff_propagate_x(&b2_hff_state, DT_HFILTER);
     b2_hff_propagate_y(&b2_hff_state, DT_HFILTER);
+	b2_hff_propagate_z(&b2_hff_state, DT_HFILTER);
 }
