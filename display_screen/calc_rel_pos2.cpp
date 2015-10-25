@@ -490,7 +490,14 @@ static void b2_hff_update_zdot(struct Hfilterdouble *hff_work, double vel, doubl
 //void b2_hff_update_gps(struct FloatVect2 *pos_ned, struct FloatVect2 *speed_ned)
 void b2_hff_update_gps()
 {
-
+///when not locked, the pacc value should be changed with the conditions.
+# define BAD_REL_POS_PACC 100
+	if((gps.pos_state ==1)||(gps.pos_state ==0))
+	{
+		gps.rel_pos_pacc_enu.x = BAD_REL_POS_PACC;
+		gps.rel_pos_pacc_enu.y = BAD_REL_POS_PACC;
+		gps.rel_pos_pacc_enu.z = BAD_REL_POS_PACC;
+	}
 
 	if (gps.rel_pos_pacc_enu.x < HFF_R_POS_MIN) {
     gps.rel_pos_pacc_enu.x = HFF_R_POS_MIN;

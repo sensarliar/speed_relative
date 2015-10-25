@@ -222,6 +222,7 @@ BOOL CBGSDlg::OnInitDialog()
 //////////////////////////////////////////
 
 	b2_hff_init(0, 0, 0, 0, 0, 0);
+	gps.pos_state = 0;
 	/////////////////////////////////////
 
 	
@@ -646,7 +647,7 @@ void CBGSDlg::OnSocket(WPARAM wParam ,LPARAM lParam)
 	CString m_sec;
 //add relative position pacc
 	double  angle,east,north,up,pacc_east1,pacc_north1,pacc_up1,range,speed,speed_v2;
-	int pos_state = 0;
+//	gps.pos_state = 0;
 
 	
 	//Î»ÖÃ
@@ -751,7 +752,7 @@ void CBGSDlg::OnSocket(WPARAM wParam ,LPARAM lParam)
 	
 	//GetDlgItem(IDC_STATE2)->GetWindowText(str);
 	m_pos_state = buffer[5];
-	pos_state = atoi(m_pos_state);
+	gps.pos_state = atoi(m_pos_state);
 	
 	speed_sy.time_ch=buffer[1];
 	speed_sy.speed_E_ch=buffer[9];
