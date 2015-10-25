@@ -644,8 +644,9 @@ void CBGSDlg::OnSocket(WPARAM wParam ,LPARAM lParam)
 	CString hour;
 	CString m_min;
 	CString m_sec;
-
-	double  angle,east,north,up,east1,north1,up1,range,speed,speed_v2;
+//add relative position pacc
+	double  angle,east,north,up,pacc_east1,pacc_north1,pacc_up1,range,speed,speed_v2;
+	int pos_state = 0;
 
 	
 	//位置
@@ -662,10 +663,10 @@ void CBGSDlg::OnSocket(WPARAM wParam ,LPARAM lParam)
 	
 
 
-	//速度
-	CString m_east1;
-	CString m_north1;
-	CString m_up1;
+	//relative position stard deviation, enu
+	CString m_pacc_east1;
+	CString m_pacc_north1;
+	CString m_pacc_up1;
 
 	CString m_v_east;
 	CString m_v_north;
@@ -682,6 +683,9 @@ void CBGSDlg::OnSocket(WPARAM wParam ,LPARAM lParam)
 	CString m_v_filter_east;
 	CString m_v_filter_north;
 	CString m_v_filter_up;
+
+	CString m_pos_state;
+
 
 	//偏航角
 	CString m_angle;
@@ -733,7 +737,7 @@ void CBGSDlg::OnSocket(WPARAM wParam ,LPARAM lParam)
 //	SetDlgItemText(IDC_SEC,m_sec);
 	
 	//定位状态
-	if (buffer[5]=="1")
+	if ((buffer[5]=="1")||(buffer[5]=="3")||(buffer[5]=="4")||(buffer[5]=="5"))
 	SetDlgItemText(IDC_STATE2,"单点锁定");
 	//SetDlgItemText(IDC_DINGWEI,"单点锁定");
 
@@ -746,7 +750,8 @@ void CBGSDlg::OnSocket(WPARAM wParam ,LPARAM lParam)
 	//SetDlgItemText(IDC_DINGWEI,"未锁定");
 	
 	//GetDlgItem(IDC_STATE2)->GetWindowText(str);
-
+	m_pos_state = buffer[5];
+	pos_state = atoi(m_pos_state);
 	
 	speed_sy.time_ch=buffer[1];
 	speed_sy.speed_E_ch=buffer[9];
@@ -778,17 +783,19 @@ void CBGSDlg::OnSocket(WPARAM wParam ,LPARAM lParam)
 	m_angle1.Format("%.1f",angle);
 //	SetDlgItemText(IDC_ANGLE,m_angle1);
 	
-	//东向速度//0.05s前的相对位置
-	m_east1=buffer[16];
-	east1=atof(m_east1);
+	//ever before, 0.05s前的相对位置
+
+	//东向相对位置  rel pacc
+	m_pacc_east1=buffer[16];
+	pacc_east1=atof(m_pacc_east1);
 	
-	//北向速度
-	m_north1=buffer[17];
-	north1=atof(m_north1);
+	//北向相对位置 rel pacc
+	m_pacc_north1=buffer[17];
+	pacc_north1=atof(m_pacc_north1);
 	
-	//上向速度
-	m_up1=buffer[18];
-	up1=atof(m_up1);
+	//上向相对位置 rel pacc
+	m_pacc_up1=buffer[18];
+	pacc_up1=atof(m_pacc_up1);
 
 
 	speed_jy.time_ch=buffer[19];
@@ -827,6 +834,10 @@ void CBGSDlg::OnSocket(WPARAM wParam ,LPARAM lParam)
 			gps.rel_speedv2_enu_measure.y = gps.speed_3d_sy.y - gps.speed_3d_jy.y;
 			gps.rel_speedv2_enu_measure.z = gps.speed_3d_sy.z - gps.speed_3d_jy.z;
 
+			gps.rel_pos_pacc_enu.x = pacc_east1;
+			gps.rel_pos_pacc_enu.y = pacc_north1;
+			gps.rel_pos_pacc_enu.z = pacc_up1;
+
 			b2_hff_update_gps();
 
 		//	gps.rel_ant_pos.x = -gps.rel_ant_pos_enu_filter.x;
@@ -843,12 +854,11 @@ void CBGSDlg::OnSocket(WPARAM wParam ,LPARAM lParam)
 			gps.rel_speedv2_enu.z = -b2_hff_state.zdot;
 			
 			gps.speed_angle = angle;
-			/*
+			/*del 50ms before rel_pos
 			gps.rel_ant_last_pos.x = -east1;
 			gps.rel_ant_last_pos.y = -north1;
 			gps.rel_ant_last_pos.z = -up1;
 			*/
-
 
 
 			calc_enu2xyz_plane_ordinator(&(gps.rel_ant2plane_pos),&(gps.rel_ant_pos));

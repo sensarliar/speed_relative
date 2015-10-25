@@ -6,23 +6,20 @@
 --------------------Configuration: BGS定位授时设备 - Win32 Debug--------------------
 </h3>
 <h3>Command Lines</h3>
-Creating temporary file "C:\DOCUME~1\Think\LOCALS~1\Temp\RSPEC.tmp" with contents
+Creating temporary file "C:\DOCUME~1\Think\LOCALS~1\Temp\RSPE9.tmp" with contents
 [
-/nologo /subsystem:windows /incremental:yes /pdb:"Debug/BGS定位授时设备.pdb" /debug /machine:I386 /out:"Debug/BGS定位授时设备.exe" /pdbtype:sept 
-".\Debug\BGS定位授时设备.obj"
-".\Debug\BGS定位授时设备Dlg.obj"
-.\Debug\calc_rel_pos2.obj
-.\Debug\StdAfx.obj
-".\Debug\BGS定位授时设备.res"
+/nologo /MTd /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /Fo"Debug/" /Fd"Debug/" /FD /GZ /c 
+"D:\work\speed_relative_github\display_screen\calc_rel_pos2.cpp"
 ]
-Creating command line "link.exe @C:\DOCUME~1\Think\LOCALS~1\Temp\RSPEC.tmp"
+Creating command line "cl.exe @C:\DOCUME~1\Think\LOCALS~1\Temp\RSPE9.tmp" 
 <h3>Output Window</h3>
-Linking...
+Compiling...
+calc_rel_pos2.cpp
 
 
 
 <h3>Results</h3>
-BGS定位授时设备.exe - 0 error(s), 0 warning(s)
+calc_rel_pos2.obj - 0 error(s), 0 warning(s)
 </pre>
 </body>
 </html>

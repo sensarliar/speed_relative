@@ -14,18 +14,22 @@ struct GpsState gps;
 #define INIT_PXX 1.
 
 //TODO: proper measurement noise
+//R is accarry, stadard deviation,not co-variance
 #ifndef HFF_R_POS
-#define HFF_R_POS   0.01
+//#define HFF_R_POS   0.01
+//#define HFF_R_POS   9
+#define HFF_R_POS   0.1
 #endif
 #ifndef HFF_R_POS_MIN
-#define HFF_R_POS_MIN 0.0001
+//#define HFF_R_POS_MIN 0.0001
+#define HFF_R_POS_MIN 0.01
 #endif
 
 #ifndef HFF_R_SPEED
-#define HFF_R_SPEED 0.01
+#define HFF_R_SPEED 0.1
 #endif
 #ifndef HFF_R_SPEED_MIN
-#define HFF_R_SPEED_MIN 0.0009
+#define HFF_R_SPEED_MIN 0.03
 #endif
 ////20Hz update
 #define DT_HFILTER 0.05
@@ -33,7 +37,8 @@ struct GpsState gps;
 
 
 /* gps measurement noise */
-double Rgps_pos, Rgps_vel;
+//double Rgps_pos, Rgps_vel;
+double Rgps_vel;
 
 /*
 
@@ -219,7 +224,10 @@ static void b2_hff_init_z(double init_z, double init_zdot)
 
 void b2_hff_init(double init_x, double init_xdot, double init_y, double init_ydot, double init_z, double init_zdot)
 {
-  Rgps_pos = HFF_R_POS;
+//  Rgps_pos = HFF_R_POS;
+	gps.rel_pos_pacc_enu.x = HFF_R_POS;
+    gps.rel_pos_pacc_enu.y = HFF_R_POS;
+	gps.rel_pos_pacc_enu.z = HFF_R_POS;
   Rgps_vel = HFF_R_SPEED;
   b2_hff_init_x(init_x, init_xdot);
   b2_hff_init_y(init_y, init_ydot);
@@ -325,7 +333,7 @@ static void b2_hff_update_x(struct Hfilterdouble *hff_work, double x_meas, doubl
   //b2_hff_x_meas = x_meas;
 
   const double y  = x_meas - hff_work->x;
-  const double S  = hff_work->xP[0][0] + Rpos;
+  const double S  = hff_work->xP[0][0] + Rpos*Rpos;
   const double K1 = hff_work->xP[0][0] * 1 / S;
   const double K2 = hff_work->xP[1][0] * 1 / S;
 
@@ -348,7 +356,7 @@ static void b2_hff_update_y(struct Hfilterdouble *hff_work, double y_meas, doubl
  // b2_hff_y_meas = y_meas;
 
   const double y  = y_meas - hff_work->y;
-  const double S  = hff_work->yP[0][0] + Rpos;
+  const double S  = hff_work->yP[0][0] + Rpos*Rpos;
   const double K1 = hff_work->yP[0][0] * 1 / S;
   const double K2 = hff_work->yP[1][0] * 1 / S;
 
@@ -372,7 +380,7 @@ static void b2_hff_update_z(struct Hfilterdouble *hff_work, double z_meas, doubl
  // b2_hff_y_meas = y_meas;
 
   const double z  = z_meas - hff_work->z;
-  const double S  = hff_work->zP[0][0] + Rpos;
+  const double S  = hff_work->zP[0][0] + Rpos*Rpos;
   const double K1 = hff_work->zP[0][0] * 1 / S;
   const double K2 = hff_work->zP[1][0] * 1 / S;
 
@@ -415,7 +423,7 @@ static void b2_hff_update_xdot(struct Hfilterdouble *hff_work, double vel, doubl
   //b2_hff_xd_meas = vel;
 
   const double yd = vel - hff_work->xdot;
-  const double S  = hff_work->xP[1][1] + Rvel;
+  const double S  = hff_work->xP[1][1] + Rvel*Rvel;
   const double K1 = hff_work->xP[0][1] * 1 / S;
   const double K2 = hff_work->xP[1][1] * 1 / S;
 
@@ -438,7 +446,7 @@ static void b2_hff_update_ydot(struct Hfilterdouble *hff_work, double vel, doubl
 //  b2_hff_yd_meas = vel;
 
   const double yd = vel - hff_work->ydot;
-  const double S  = hff_work->yP[1][1] + Rvel;
+  const double S  = hff_work->yP[1][1] + Rvel*Rvel;
   const double K1 = hff_work->yP[0][1] * 1 / S;
   const double K2 = hff_work->yP[1][1] * 1 / S;
 
@@ -462,7 +470,7 @@ static void b2_hff_update_zdot(struct Hfilterdouble *hff_work, double vel, doubl
 //  b2_hff_yd_meas = vel;
 
   const double zd = vel - hff_work->zdot;
-  const double S  = hff_work->zP[1][1] + Rvel;
+  const double S  = hff_work->zP[1][1] + Rvel*Rvel;
   const double K1 = hff_work->zP[0][1] * 1 / S;
   const double K2 = hff_work->zP[1][1] * 1 / S;
 
@@ -483,7 +491,18 @@ static void b2_hff_update_zdot(struct Hfilterdouble *hff_work, double vel, doubl
 void b2_hff_update_gps()
 {
 
-#if USE_GPS_ACC4R
+
+	if (gps.rel_pos_pacc_enu.x < HFF_R_POS_MIN) {
+    gps.rel_pos_pacc_enu.x = HFF_R_POS_MIN;
+  }
+    if (gps.rel_pos_pacc_enu.y < HFF_R_POS_MIN) {
+    gps.rel_pos_pacc_enu.y = HFF_R_POS_MIN;
+  }
+	if (gps.rel_pos_pacc_enu.z < HFF_R_POS_MIN) {
+    gps.rel_pos_pacc_enu.z = HFF_R_POS_MIN;
+  }
+//#if USE_GPS_ACC4R
+/*
   Rgps_pos = (double) gps.pacc / 100.;
   if (Rgps_pos < HFF_R_POS_MIN) {
     Rgps_pos = HFF_R_POS_MIN;
@@ -493,13 +512,14 @@ void b2_hff_update_gps()
   if (Rgps_vel < HFF_R_SPEED_MIN) {
     Rgps_vel = HFF_R_SPEED_MIN;
   }
-#endif
+  */
+//#endif
 
 
     /* update filter state with measurement */
-    b2_hff_update_x(&b2_hff_state, gps.rel_ant_pos_enu_measure.x, Rgps_pos);
-    b2_hff_update_y(&b2_hff_state, gps.rel_ant_pos_enu_measure.y, Rgps_pos);
-	b2_hff_update_z(&b2_hff_state, gps.rel_ant_pos_enu_measure.z, Rgps_pos);
+    b2_hff_update_x(&b2_hff_state, gps.rel_ant_pos_enu_measure.x, gps.rel_pos_pacc_enu.x);
+    b2_hff_update_y(&b2_hff_state, gps.rel_ant_pos_enu_measure.y, gps.rel_pos_pacc_enu.y);
+	b2_hff_update_z(&b2_hff_state, gps.rel_ant_pos_enu_measure.z, gps.rel_pos_pacc_enu.z);
 
     b2_hff_update_xdot(&b2_hff_state, gps.rel_speedv2_enu_measure.x, Rgps_vel);
     b2_hff_update_ydot(&b2_hff_state, gps.rel_speedv2_enu_measure.y, Rgps_vel);
