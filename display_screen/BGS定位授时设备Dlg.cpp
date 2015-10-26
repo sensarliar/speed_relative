@@ -646,7 +646,8 @@ void CBGSDlg::OnSocket(WPARAM wParam ,LPARAM lParam)
 	CString m_min;
 	CString m_sec;
 //add relative position pacc
-	double  angle,east,north,up,pacc_east1,pacc_north1,pacc_up1,range,speed,speed_v2;
+//	double  angle,east,north,up,pacc_east1,pacc_north1,pacc_up1,range,speed,speed_v2;
+double  angle,east,north,up,pacc_east1,pacc_north1,pacc_up1,range,speed;
 //	gps.pos_state = 0;
 
 	
@@ -738,11 +739,11 @@ void CBGSDlg::OnSocket(WPARAM wParam ,LPARAM lParam)
 //	SetDlgItemText(IDC_SEC,m_sec);
 	
 	//定位状态
-	if ((buffer[5]=="1")||(buffer[5]=="3")||(buffer[5]=="4")||(buffer[5]=="5"))
+	if ((buffer[5]=="1")||(buffer[5]=="3")||(buffer[5]=="5"))
 	SetDlgItemText(IDC_STATE2,"单点锁定");
 	//SetDlgItemText(IDC_DINGWEI,"单点锁定");
 
-	else if(buffer[5]=="2")
+	else if(buffer[5]=="2"||(buffer[5]=="4"))
 	SetDlgItemText(IDC_STATE2,"相对位置锁定");
 	//SetDlgItemText(IDC_DINGWEI,"相对位置锁定");
 
@@ -805,6 +806,7 @@ void CBGSDlg::OnSocket(WPARAM wParam ,LPARAM lParam)
 	speed_jy.speed_U_ch=buffer[22];
 
 	list <SpeedInfo>::iterator m;
+	bool cmp_ok_flag =0;
 
 	for (m = list_speed_sy.begin(); m != list_speed_sy.end(); ++m)
 //		for(int m=0;m<list_speed_sy.size();m++)
@@ -813,10 +815,19 @@ void CBGSDlg::OnSocket(WPARAM wParam ,LPARAM lParam)
 		{
 		//	list_speed_sy._Head
 				speed_sy_ok = *m;
+				cmp_ok_flag = 1;
 		}
 	}
 
+	if(!cmp_ok_flag)
+	{
+	//	speed_sy_ok = *(list_speed_sy.begin());
+		m--;
+		speed_sy_ok = *m;
+	}
 
+//bug--fix
+/*
 	gps.speed_3d_jy.x=atof(speed_sy_ok.speed_E_ch);
 	gps.speed_3d_jy.y=atof(speed_sy_ok.speed_N_ch);
 	gps.speed_3d_jy.z=atof(speed_sy_ok.speed_U_ch);
@@ -824,7 +835,15 @@ void CBGSDlg::OnSocket(WPARAM wParam ,LPARAM lParam)
 	gps.speed_3d_sy.x=atof(speed_jy.speed_E_ch);
 	gps.speed_3d_sy.y=atof(speed_jy.speed_N_ch);
 	gps.speed_3d_sy.z=atof(speed_jy.speed_U_ch);
-	
+*/	
+	gps.speed_3d_sy.x=atof(speed_sy_ok.speed_E_ch);
+	gps.speed_3d_sy.y=atof(speed_sy_ok.speed_N_ch);
+	gps.speed_3d_sy.z=atof(speed_sy_ok.speed_U_ch);
+
+	gps.speed_3d_jy.x=atof(speed_jy.speed_E_ch);
+	gps.speed_3d_jy.y=atof(speed_jy.speed_N_ch);
+	gps.speed_3d_jy.z=atof(speed_jy.speed_U_ch);
+
 	}			
 	
 			gps.rel_ant_pos_enu_measure.x = east;
@@ -900,6 +919,7 @@ void CBGSDlg::OnSocket(WPARAM wParam ,LPARAM lParam)
 			m_speed.Format("%.2f",speed);
 	//		SetDlgItemText(IDC_SPEED,m_speed);
 //rel_speed method 2 display
+/*
 			m_v_east_v2.Format("%.2f",gps.rel_speed_xyz.x);
 	//		SetDlgItemText(IDC_Vx2, m_v_east_v2 );
 			
@@ -913,7 +933,7 @@ void CBGSDlg::OnSocket(WPARAM wParam ,LPARAM lParam)
 			//speed_v2=sqrt(gps.rel_speedv2_xyz.x*gps.rel_speedv2_xyz.x+gps.rel_speedv2_xyz.y*gps.rel_speedv2_xyz.y+gps.rel_speedv2_xyz.z*gps.rel_speedv2_xyz.z);
 			m_speed_v2.Format("%.2f",speed_v2);
 	//		SetDlgItemText(IDC_SPEED2,m_speed_v2);
-
+*/
 			m_filter_east.Format("%.4f",b2_hff_state.x);
 			m_filter_north.Format("%.4f",b2_hff_state.y);
 			m_filter_up.Format("%.4f",b2_hff_state.z);
@@ -1157,7 +1177,7 @@ void CBGSDlg::OnSocket(WPARAM wParam ,LPARAM lParam)
 	}
 	*str_p = ',';
 	str_p++;
-
+/*
 
 	//获取相对速度v2
 	//GetDlgItem(IDC_SPEED)->GetWindowText(text);
@@ -1214,6 +1234,7 @@ void CBGSDlg::OnSocket(WPARAM wParam ,LPARAM lParam)
 	}
 	*str_p = ',';
 	str_p++;
+*/
 ////////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////////////
 	//获取东向位置filter
