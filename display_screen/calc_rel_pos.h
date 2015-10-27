@@ -36,6 +36,7 @@ struct GpsState {
   struct point_3d rel_pos_pacc_enu;
   
   int pos_state;
+  int pos_state_filter;
 //  struct point_3d rel_ant_pos_enu_filter;//
 //  struct point_3d rel_speedv2_enu_filter;
 };

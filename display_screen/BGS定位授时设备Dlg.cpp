@@ -223,6 +223,7 @@ BOOL CBGSDlg::OnInitDialog()
 
 	b2_hff_init(0, 0, 0, 0, 0, 0);
 	gps.pos_state = 0;
+	gps.pos_state_filter = 0;
 	/////////////////////////////////////
 
 	
@@ -612,6 +613,7 @@ struct SpeedInfo{
 
 list <SpeedInfo> list_speed_sy;
 //list <int> list_speed_sy;
+list <int> list_pos_state;
 
 struct SpeedInfo speed_sy;
 struct SpeedInfo speed_jy;
@@ -738,18 +740,7 @@ double  angle,east,north,up,pacc_east1,pacc_north1,pacc_up1,range,speed;
 
 //	SetDlgItemText(IDC_SEC,m_sec);
 	
-	//定位状态
-	if ((buffer[5]=="1")||(buffer[5]=="3")||(buffer[5]=="5"))
-	SetDlgItemText(IDC_STATE2,"单点锁定");
-	//SetDlgItemText(IDC_DINGWEI,"单点锁定");
 
-	else if(buffer[5]=="2"||(buffer[5]=="4"))
-	SetDlgItemText(IDC_STATE2,"相对位置锁定");
-	//SetDlgItemText(IDC_DINGWEI,"相对位置锁定");
-
-	else
-	SetDlgItemText(IDC_STATE2,"未锁定");
-	//SetDlgItemText(IDC_DINGWEI,"未锁定");
 	
 	//GetDlgItem(IDC_STATE2)->GetWindowText(str);
 	m_pos_state = buffer[5];
@@ -766,7 +757,29 @@ double  angle,east,north,up,pacc_east1,pacc_north1,pacc_up1,range,speed;
 		list_speed_sy.pop_front();
 	}
 
+	list_pos_state.push_back(gps.pos_state);
+	if(list_pos_state.size()>4)
+	{
+		list_pos_state.pop_front();
+	}
 	
+	list <int>::iterator n_int;
+	int array_pos_state[4];
+	int counter_pos_state;
+
+	if(list_pos_state.size()>3){
+			for (n_int = list_pos_state.begin(),counter_pos_state=0; n_int != list_pos_state.end(); ++n_int,++counter_pos_state)
+			{
+				array_pos_state[counter_pos_state]=*(n_int);
+			}
+		if((array_pos_state[0]==array_pos_state[1])&&(array_pos_state[1]==array_pos_state[2])&&(array_pos_state[2]==array_pos_state[3]))
+		{
+			gps.pos_state_filter = array_pos_state[3];
+		}
+	}
+
+
+
 	//东向位置
 	m_east=buffer[12];
 	east=atof(m_east);	
@@ -979,6 +992,32 @@ double  angle,east,north,up,pacc_east1,pacc_north1,pacc_up1,range,speed;
 
 			SetDlgItemText(IDC_SPEED2,m_speed_v2);
 */
+
+/*				//定位状态
+	if ((buffer[5]=="1")||(buffer[5]=="3")||(buffer[5]=="5"))
+	SetDlgItemText(IDC_STATE2,"单点锁定");
+	//SetDlgItemText(IDC_DINGWEI,"单点锁定");
+
+	else if(buffer[5]=="2"||(buffer[5]=="4"))
+	SetDlgItemText(IDC_STATE2,"相对位置锁定");
+	//SetDlgItemText(IDC_DINGWEI,"相对位置锁定");
+
+	else
+	SetDlgItemText(IDC_STATE2,"未锁定");
+	//SetDlgItemText(IDC_DINGWEI,"未锁定");
+*/
+		if ((gps.pos_state_filter==1)||(gps.pos_state_filter==3)||(gps.pos_state_filter==5))
+		SetDlgItemText(IDC_STATE2,"单点锁定");
+		//SetDlgItemText(IDC_DINGWEI,"单点锁定");
+
+		else if((gps.pos_state_filter==2)||(gps.pos_state_filter==4))
+		SetDlgItemText(IDC_STATE2,"相对位置锁定");
+		//SetDlgItemText(IDC_DINGWEI,"相对位置锁定");
+
+		else
+		SetDlgItemText(IDC_STATE2,"未锁定");
+		//SetDlgItemText(IDC_DINGWEI,"未锁定");
+
 			disp_count =0;
 
 
