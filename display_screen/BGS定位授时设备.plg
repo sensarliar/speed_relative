@@ -6,7 +6,7 @@
 --------------------Configuration: BGS定位授时设备 - Win32 Debug--------------------
 </h3>
 <h3>Command Lines</h3>
-Creating temporary file "C:\DOCUME~1\Think\LOCALS~1\Temp\RSPD3.tmp" with contents
+Creating temporary file "C:\DOCUME~1\Think\LOCALS~1\Temp\RSPEF.tmp" with contents
 [
 /nologo /subsystem:windows /incremental:yes /pdb:"Debug/BGS定位授时设备.pdb" /debug /machine:I386 /out:"Debug/BGS定位授时设备.exe" /pdbtype:sept 
 ".\Debug\BGS定位授时设备.obj"
@@ -15,7 +15,7 @@ Creating temporary file "C:\DOCUME~1\Think\LOCALS~1\Temp\RSPD3.tmp" with content
 .\Debug\StdAfx.obj
 ".\Debug\BGS定位授时设备.res"
 ]
-Creating command line "link.exe @C:\DOCUME~1\Think\LOCALS~1\Temp\RSPD3.tmp"
+Creating command line "link.exe @C:\DOCUME~1\Think\LOCALS~1\Temp\RSPEF.tmp"
 <h3>Output Window</h3>
 Linking...
 
