@@ -7,8 +7,8 @@
 
 struct GpsState gps;
 /** process noise (is the same for x and y)*/
-#define Q       0.1
-#define Qdotdot 0.1
+#define Q       0.001
+#define Qdotdot 0.01
 
 /** initial covariance diagonal */
 #define INIT_PXX 1.
@@ -26,10 +26,10 @@ struct GpsState gps;
 #endif
 
 #ifndef HFF_R_SPEED
-#define HFF_R_SPEED 0.1
+#define HFF_R_SPEED 0.03
 #endif
 #ifndef HFF_R_SPEED_MIN
-#define HFF_R_SPEED_MIN 0.03
+#define HFF_R_SPEED_MIN 0.02
 #endif
 ////20Hz update
 #define DT_HFILTER 0.05
@@ -491,7 +491,7 @@ static void b2_hff_update_zdot(struct Hfilterdouble *hff_work, double vel, doubl
 void b2_hff_update_gps()
 {
 ///when not locked, the pacc value should be changed with the conditions.
-# define BAD_REL_POS_PACC 100
+# define BAD_REL_POS_PACC 3160
 	if((gps.pos_state ==1)||(gps.pos_state ==0))
 	{
 		gps.rel_pos_pacc_enu.x = BAD_REL_POS_PACC;
